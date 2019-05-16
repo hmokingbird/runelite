@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.runelite.api.NPC;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
@@ -54,7 +53,6 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 
 @Getter
-@RequiredArgsConstructor
 public class HotColdClue extends ClueScroll implements LocationClueScroll, LocationsClueScroll, TextClueScroll, NpcClueScroll
 {
 	private static final Pattern INITIAL_STRANGE_DEVICE_MESSAGE = Pattern.compile("The device is (.*)");
@@ -83,10 +81,18 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 		return null;
 	}
 
-	@Override
-	public List<WorldPoint> getLocations()
+	private HotColdClue(String text, String npc, String solution)
 	{
-		return Lists.transform(digLocations, HotColdLocation::getWorldPoint);
+		this.text = text;
+		this.npc = npc;
+		this.solution = solution;
+		setRequiresSpade(true);
+	}
+
+	@Override
+	public WorldPoint[] getLocations()
+	{
+		return Lists.transform(digLocations, HotColdLocation::getWorldPoint).toArray(new WorldPoint[0]);
 	}
 
 	@Override
@@ -100,14 +106,6 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 		// strange device has not been tested yet, show how to get it
 		if (lastWorldPoint == null && location == null)
 		{
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left("Clue:")
-				.build());
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left(getText())
-				.leftColor(TITLED_CONTENT_COLOR)
-				.build());
-
 			if (getNpc() != null)
 			{
 				panelComponent.getChildren().add(LineComponent.builder()
@@ -137,7 +135,6 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 
 			for (HotColdLocation hotColdLocation : digLocations)
 			{
-				Rectangle2D r = hotColdLocation.getRect();
 				HotColdArea hotColdArea = hotColdLocation.getHotColdArea();
 
 				if (locationCounts.containsKey(hotColdArea))
@@ -232,7 +229,6 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 		}
 	}
 
-	@Override
 	public boolean update(final String message, final ClueScrollPlugin plugin)
 	{
 		if (!message.startsWith("The device is"))
@@ -294,7 +290,7 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 	{
 		this.location = null;
 
-		if (digLocations.size() == 0)
+		if (digLocations.isEmpty())
 		{
 			digLocations.addAll(Arrays.asList(HotColdLocation.values()));
 		}
@@ -406,5 +402,10 @@ public class HotColdClue extends ClueScroll implements LocationClueScroll, Locat
 	{
 		this.location = wp;
 		reset();
+	}
+
+	public String[] getNpcs()
+	{
+		return new String[] {npc};
 	}
 }

@@ -27,13 +27,17 @@ package net.runelite.client.plugins.chatnotifications;
 import com.google.inject.Guice;
 import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;
+import java.util.Iterator;
+import java.util.List;
 import javax.inject.Inject;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.MessageNode;
-import net.runelite.api.events.SetMessage;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.client.Notifier;
 import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.util.Text;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,20 +76,34 @@ public class ChatNotificationsPluginTest
 	}
 
 	@Test
-	public void onSetMessage()
+	public void onChatMessage()
 	{
 		when(config.highlightWordsString()).thenReturn("Deathbeam, Deathbeam OSRS , test");
 
 		MessageNode messageNode = mock(MessageNode.class);
 		when(messageNode.getValue()).thenReturn("Deathbeam, Deathbeam OSRS");
 
-		SetMessage setMessage = new SetMessage();
-		setMessage.setType(ChatMessageType.PUBLIC);
-		setMessage.setMessageNode(messageNode);
+		ChatMessage chatMessage = new ChatMessage();
+		chatMessage.setType(ChatMessageType.PUBLICCHAT);
+		chatMessage.setMessageNode(messageNode);
 
 		chatNotificationsPlugin.startUp(); // load highlight config
-		chatNotificationsPlugin.onSetMessage(setMessage);
+		chatNotificationsPlugin.onChatMessage(chatMessage);
 
 		verify(messageNode).setValue("<colHIGHLIGHT>Deathbeam<colNORMAL>, <colHIGHLIGHT>Deathbeam<colNORMAL> OSRS");
+	}
+
+	@Test
+	public void highlightListTest()
+	{
+		when(config.highlightWordsString()).thenReturn("this,is, a                   , test, ");
+		final List<String> higlights = Text.fromCSV(config.highlightWordsString());
+		assertEquals(4, higlights.size());
+
+		final Iterator<String> iterator = higlights.iterator();
+		assertEquals("this", iterator.next());
+		assertEquals("is", iterator.next());
+		assertEquals("a", iterator.next());
+		assertEquals("test", iterator.next());
 	}
 }

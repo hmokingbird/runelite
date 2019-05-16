@@ -24,7 +24,7 @@
  */
 package net.runelite.client.plugins.fishing;
 
-import java.util.HashMap;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import lombok.Getter;
 import net.runelite.api.ItemID;
@@ -81,6 +81,7 @@ import static net.runelite.api.NpcID.FISHING_SPOT_7732;
 import static net.runelite.api.NpcID.FISHING_SPOT_7733;
 import static net.runelite.api.NpcID.FISHING_SPOT_7946;
 import static net.runelite.api.NpcID.FISHING_SPOT_7947;
+import static net.runelite.api.NpcID.FISHING_SPOT_8523;
 import static net.runelite.api.NpcID.ROD_FISHING_SPOT;
 import static net.runelite.api.NpcID.ROD_FISHING_SPOT_1508;
 import static net.runelite.api.NpcID.ROD_FISHING_SPOT_1509;
@@ -154,10 +155,12 @@ enum FishingSpot
 	),
 	DARK_CRAB("Dark Crab", ItemID.RAW_DARK_CRAB,
 		FISHING_SPOT_1536
-	);
+	),
+	COMMON_TENCH("Common tench, Bluegill, Greater siren, Mottled eel", ItemID.COMMON_TENCH,
+		FISHING_SPOT_8523);
 
 	@Getter
-	private static final Map<Integer, FishingSpot> SPOTS = new HashMap<>();
+	private static final Map<Integer, FishingSpot> SPOTS;
 
 	private final String name;
 	private final int fishSpriteId;
@@ -165,15 +168,17 @@ enum FishingSpot
 
 	static
 	{
-		FishingSpot[] spots = values();
+		ImmutableMap.Builder<Integer, FishingSpot> builder = new ImmutableMap.Builder<>();
 
-		for (FishingSpot spot : spots)
+		for (FishingSpot spot : values())
 		{
 			for (int spotId : spot.getIds())
 			{
-				SPOTS.put(spotId, spot);
+				builder.put(spotId, spot);
 			}
 		}
+
+		SPOTS = builder.build();
 	}
 
 	FishingSpot(String spot, int fishSpriteId, int... ids)

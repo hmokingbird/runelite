@@ -66,6 +66,7 @@ public class WidgetID
 	public static final int QUICK_PRAYERS_GROUP_ID = 77;
 	public static final int SHOP_GROUP_ID = 300;
 	public static final int SHOP_INVENTORY_GROUP_ID = 301;
+	public static final int SMITHING_GROUP_ID = 312;
 	public static final int GUIDE_PRICES_GROUP_ID = 464;
 	public static final int GUIDE_PRICES_INVENTORY_GROUP_ID = 238;
 	public static final int COMBAT_GROUP_ID = 593;
@@ -117,15 +118,31 @@ public class WidgetID
 	public static final int FOSSIL_ISLAND_OXYGENBAR_ID = 609;
 	public static final int MINIGAME_TAB_ID = 76;
 	public static final int SPELLBOOK_GROUP_ID = 218;
+	public static final int PVP_GROUP_ID = 90;
+	public static final int FISHING_TRAWLER_GROUP_ID = 366;
+	public static final int ZEAH_MESS_HALL_GROUP_ID = 235;
+	public static final int KOUREND_FAVOUR_GROUP_ID = 246;
+	public static final int LOOTING_BAG_GROUP_ID = 81;
+	public static final int SKOTIZO_GROUP_ID = 308;
+	public static final int ENTERING_HOUSE_GROUP_ID = 71;
+	public static final int FULLSCREEN_MAP_GROUP_ID = 165;
+	public static final int QUESTLIST_GROUP_ID = 399;
+	public static final int SKILLS_GROUP_ID = 320;
+	public static final int QUESTTAB_GROUP_ID = 629;
+	public static final int MUSIC_GROUP_ID = 239;
+	public static final int BARROWS_PUZZLE_GROUP_ID = 25;
+	public static final int KEPT_ON_DEATH_GROUP_ID = 4;
+	public static final int GUIDE_PRICE_GROUP_ID = 464;
+	public static final int SEED_VAULT_INVENTORY_GROUP_ID = 630;
 
 	static class WorldMap
 	{
-		static final int MAPVIEW = 4;
-		static final int OVERVIEW_MAP = 7;
-		static final int SEARCH = 22;
-		static final int SURFACE_SELECTOR = 30;
-		static final int TOOLTIP = 36;
-		static final int OPTION = 42;
+		static final int MAPVIEW = 6;
+		static final int OVERVIEW_MAP = 9;
+		static final int SEARCH = 24;
+		static final int SURFACE_SELECTOR = 32;
+		static final int TOOLTIP = 38;
+		static final int OPTION = 43;
 	}
 
 	static class SlayerRewards
@@ -188,16 +205,23 @@ public class WidgetID
 	static class ClanChat
 	{
 		static final int TITLE = 1;
-		static final int NAME = 3;
-		static final int OWNER = 5;
+		static final int NAME = 4;
+		static final int OWNER = 6;
+		static final int LIST = 16;
 	}
 
 	static class Bank
 	{
-		static final int ITEM_CONTAINER = 23;
+		static final int BANK_CONTAINER = 1;
 		static final int INVENTORY_ITEM_CONTAINER = 3;
-		static final int BANK_TITLE_BAR = 15;
-		static final int BANK_ITEM_COUNT = 16;
+		static final int BANK_TITLE_BAR = 4;
+		static final int CONTENT_CONTAINER = 10;
+		static final int ITEM_CONTAINER = 13;
+		static final int SEARCH_BUTTON_BACKGROUND = 40;
+		static final int DEPOSIT_INVENTORY = 42;
+		static final int DEPOSIT_EQUIPMENT = 44;
+		static final int INCINERATOR = 46;
+		static final int INCINERATOR_CONFIRM = 47;
 	}
 
 	static class GrandExchange
@@ -228,6 +252,11 @@ public class WidgetID
 		static final int INVENTORY_ITEM_CONTAINER = 0;
 	}
 
+	static class Smithing
+	{
+		static final int INVENTORY_ITEM_CONTAINER = 0;
+	}
+
 	static class GuidePrices
 	{
 		static final int ITEM_CONTAINER = 2;
@@ -254,11 +283,13 @@ public class WidgetID
 	{
 		static final int EMOTE_WINDOW = 0;
 		static final int EMOTE_CONTAINER = 1;
+		static final int EMOTE_SCROLLBAR = 2;
 	}
 
 	static class Cluescroll
 	{
 		static final int CLUE_TEXT = 2;
+		static final int CLUE_SCROLL_ITEM_CONTAINER = 3;
 	}
 
 	static class Minimap
@@ -271,11 +302,12 @@ public class WidgetID
 		static final int TOGGLE_RUN_ORB = 22; // Has the "Toggle run" name
 		static final int RUN_ORB_TEXT = 23;
 		static final int SPEC_ORB = 28;
+		static final int WORLDMAP_ORB = 41;
 	}
 
 	static class LoginClickToPlayScreen
 	{
-		static final int MESSAGE_OF_THE_DAY = 4;
+		static final int MESSAGE_OF_THE_DAY = 7;
 	}
 
 	static class Viewport
@@ -326,6 +358,7 @@ public class WidgetID
 		static final int ROOT_INTERFACE_CONTAINER = 62;
 		static final int BANK_CONTAINER = 64;
 		static final int INTERFACE_CONTAINER = 65;
+		static final int INVENTORY_CONTAINER = 69;
 	}
 
 	static class ResizableViewport
@@ -358,6 +391,8 @@ public class WidgetID
 		static final int EQUIPMENT_ICON = 62;
 		static final int PRAYER_ICON = 63;
 		static final int MAGIC_ICON = 64;
+		static final int INTERFACE_CONTAINER = 65;
+		static final int INVENTORY_CONTAINER = 71;
 	}
 
 	static class ResizableViewportBottomLine
@@ -389,49 +424,56 @@ public class WidgetID
 		static final int EMOTE_ICON = 45;
 		static final int MUSIC_TAB = 40;
 		static final int MUSIC_ICON = 46;
+		static final int MAGIC_ICON = 63;
+		static final int INVENTORY_CONTAINER = 71;
 	}
 
 	static class Chatbox
 	{
-		static final int CHATBOX_PARENT = 0;
-		static final int CHATBOX_BUTTONS = 1;
-		static final int CHATBOX_REPORT_TEXT = 29;
-		static final int CHATBOX_FRAME = 30;
-		static final int CHATBOX_MESSAGES = 48;
-		static final int CHATBOX_INPUT = 50;
+		static final int PARENT = 0;
+		static final int BUTTONS = 1;
+		static final int REPORT_TEXT = 36;
+		static final int FRAME = 37;
+		static final int TRANSPARENT_BACKGROUND = 38;
+		static final int CONTAINER = 40;
+		static final int TITLE = 44;
+		static final int FULL_INPUT = 45;
+		static final int MESSAGES = 55;
+		static final int TRANSPARENT_BACKGROUND_LINES = 56;
+		static final int INPUT = 57;
 	}
 
 	static class Prayer
 	{
-		static final int THICK_SKIN = 4;
-		static final int BURST_OF_STRENGTH = 5;
-		static final int CLARITY_OF_THOUGHT = 6;
-		static final int SHARP_EYE = 22;
-		static final int MYSTIC_WILL = 23;
-		static final int ROCK_SKIN = 7;
-		static final int SUPERHUMAN_STRENGTH = 8;
-		static final int IMPROVED_REFLEXES = 9;
-		static final int RAPID_RESTORE = 10;
-		static final int RAPID_HEAL = 11;
-		static final int PROTECT_ITEM = 12;
-		static final int HAWK_EYE = 24;
-		static final int MYSTIC_LORE = 25;
-		static final int STEEL_SKIN = 13;
-		static final int ULTIMATE_STRENGTH = 14;
-		static final int INCREDIBLE_REFLEXES = 15;
-		static final int PROTECT_FROM_MAGIC = 16;
-		static final int PROTECT_FROM_MISSILES = 17;
-		static final int PROTECT_FROM_MELEE = 18;
-		static final int EAGLE_EYE = 26;
-		static final int MYSTIC_MIGHT = 27;
-		static final int RETRIBUTION = 19;
-		static final int REDEMPTION = 20;
-		static final int SMITE = 21;
-		static final int PRESERVE = 32;
-		static final int CHIVALRY = 28;
-		static final int PIETY = 29;
-		static final int RIGOUR = 30;
-		static final int AUGURY = 31;
+		static final int THICK_SKIN = 5;
+		static final int BURST_OF_STRENGTH = 6;
+		static final int CLARITY_OF_THOUGHT = 7;
+		static final int SHARP_EYE = 23;
+		static final int MYSTIC_WILL = 24;
+		static final int ROCK_SKIN = 8;
+		static final int SUPERHUMAN_STRENGTH = 9;
+		static final int IMPROVED_REFLEXES = 10;
+		static final int RAPID_RESTORE = 11;
+		static final int RAPID_HEAL = 12;
+		static final int PROTECT_ITEM = 13;
+		static final int HAWK_EYE = 25;
+		static final int MYSTIC_LORE = 26;
+		static final int STEEL_SKIN = 14;
+		static final int ULTIMATE_STRENGTH = 15;
+		static final int INCREDIBLE_REFLEXES = 16;
+		static final int PROTECT_FROM_MAGIC = 17;
+		static final int PROTECT_FROM_MISSILES = 18;
+		static final int PROTECT_FROM_MELEE = 19;
+		static final int EAGLE_EYE = 27;
+		static final int MYSTIC_MIGHT = 28;
+		static final int RETRIBUTION = 20;
+		static final int REDEMPTION = 21;
+		static final int SMITE = 22;
+		static final int PRESERVE = 33;
+		static final int CHIVALRY = 29;
+		static final int PIETY = 30;
+		static final int RIGOUR = 31;
+		static final int AUGURY = 32;
 	}
 
 	public static class QuickPrayer
@@ -479,12 +521,13 @@ public class WidgetID
 		static final int STYLE_FOUR = 15;
 		static final int SPELLS = 19;
 		static final int DEFENSIVE_SPELL_BOX = 20;
-		static final int DEFENSIVE_SPELL_ICON = 21;
-		static final int DEFENSIVE_SPELL_SHIELD = 22;
-		static final int DEFENSIVE_SPELL_TEXT = 23;
-		static final int SPELL_BOX = 24;
-		static final int SPELL_ICON = 25;
-		static final int SPELL_TEXT = 26;
+		static final int DEFENSIVE_SPELL_ICON = 22;
+		static final int DEFENSIVE_SPELL_SHIELD = 23;
+		static final int DEFENSIVE_SPELL_TEXT = 24;
+		static final int SPELL_BOX = 25;
+		static final int SPELL_ICON = 27;
+		static final int SPELL_TEXT = 28;
+		static final int AUTO_RETALIATE = 29;
 	}
 
 	static class VolcanicMine
@@ -538,9 +581,9 @@ public class WidgetID
 
 	static class Raids
 	{
-		static final int POINTS_INFOBOX = 3;
+		static final int POINTS_INFOBOX = 6;
 	}
-	
+
 	static class ExperienceDrop
 	{
 		static final int DROP_1 = 15;
@@ -647,7 +690,7 @@ public class WidgetID
 
 	static class WorldSwitcher
 	{
-		static final int WORLD_LIST = 14;
+		static final int WORLD_LIST = 16;
 	}
 
 	static class FossilOxygen
@@ -657,17 +700,17 @@ public class WidgetID
 
 	static class Minigames
 	{
-		static final int TELEPORT_BUTTON = 29;
+		static final int TELEPORT_BUTTON = 26;
 	}
 
 	static class StandardSpellBook
 	{
-		static final int LUMBRIDGE_HOME_TELEPORT = 1;
+		static final int LUMBRIDGE_HOME_TELEPORT = 4;
 	}
 
 	static class AncientSpellBook
 	{
-		static final int EDGEVILLE_HOME_TELEPORT = 97;
+		static final int EDGEVILLE_HOME_TELEPORT = 98;
 	}
 
 	static class LunarSpellBook
@@ -677,6 +720,84 @@ public class WidgetID
 
 	static class ArceuusSpellBook
 	{
-		static final int ARCEUUS_HOME_TELEPORT = 145;
+		static final int ARCEUUS_HOME_TELEPORT = 143;
+	}
+
+	static class Pvp
+	{
+		static final int BOUNTY_HUNTER_INFO = 19;
+		static final int KILLDEATH_RATIO = 15;
+		static final int SKULL_CONTAINER = 62;
+		static final int SAFE_ZONE = 64;
+		static final int WILDERNESS_LEVEL = 67; // this can also be the Deadman Mode "Protection" text
+	}
+
+	static class KourendFavour
+	{
+		static final int KOUREND_FAVOUR_OVERLAY = 1;
+	}
+
+	static class Zeah
+	{
+		static final int MESS_HALL_COOKING_DISPLAY = 3;
+	}
+
+	static class LootingBag
+	{
+		static final int LOOTING_BAG_INVENTORY = 5;
+	}
+
+	static class Skotizo
+	{
+		static final int CONTAINER = 3;
+	}
+
+	static class FullScreenMap
+	{
+		static final int ROOT = 25;
+	}
+
+	static class QuestList
+	{
+		static final int BOX = 0;
+		static final int SCROLLBAR = 3;
+		static final int CONTAINER = 5;
+		static final int FREE_CONTAINER = 6;
+		static final int MEMBERS_CONTAINER = 7;
+		static final int MINIQUEST_CONTAINER = 8;
+	}
+
+	static class QuestTab
+	{
+		static final int QUEST_TAB = 3;
+	}
+
+	static class Music
+	{
+		static final int CONTAINER = 0;
+		static final int LIST = 3;
+		static final int SCROLLBAR = 4;
+	}
+
+	static class Barrows_Puzzle
+	{
+		static final int PARENT = 0;
+		static final int CONTAINER = 1;
+		static final int TOP_ROW_PUZZLE = 2;
+		static final int SEQUENCE_1 = 3;
+		static final int SEQUENCE_1_TEXT = 4;
+		static final int SEQUENCE_2 = 5;
+		static final int SEQUENCE_2_TEXT = 6;
+		static final int SEQUENCE_3 = 7;
+		static final int SEQUENCE_3_TEXT = 8;
+		static final int SEQUENCE_4 = 9;
+		static final int SEQUENCE_4_TEXT = 10;
+		static final int NEXT_SHAPE_TEXT = 11;
+		static final int ANSWER1_CONTAINER = 12;
+		static final int ANSWER1 = 13;
+		static final int ANSWER2_CONTAINER = 14;
+		static final int ANSWER2 = 15;
+		static final int ANSWER3_CONTAINER = 16;
+		static final int ANSWER3 = 17;
 	}
 }

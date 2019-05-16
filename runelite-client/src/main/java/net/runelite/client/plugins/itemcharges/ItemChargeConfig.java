@@ -183,12 +183,74 @@ public interface ItemChargeConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "showAbyssalBraceletCharges",
+			name = "Show Abyssal Bracelet Charges",
+			description = "Configures if abyssal bracelet item charge is shown",
+			position = 13
+	)
+	default boolean showAbyssalBraceletCharges()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "recoilNotification",
 		name = "Ring of Recoil Notification",
 		description = "Configures if the ring of recoil breaking notification is shown",
-		position = 13
+		position = 14
 	)
 	default boolean recoilNotification()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "showBindingNecklaceCharges",
+		name = "Show Binding Necklace Charges",
+		description = "Configures if binding necklace item charge is shown",
+		position = 15
+	)
+	default boolean showBindingNecklaceCharges()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "bindingNecklace",
+		name = "",
+		description = "",
+		hidden = true
+	)
+	default int bindingNecklace()
+	{
+		return -1;
+	}
+
+	@ConfigItem(
+		keyName = "bindingNecklace",
+		name = "",
+		description = ""
+	)
+	void bindingNecklace(int bindingNecklace);
+
+	@ConfigItem(
+		keyName = "bindingNotification",
+		name = "Binding Necklace Notification",
+		description = "Configures if the binding necklace breaking notification is shown",
+		position = 16
+	)
+	default boolean bindingNotification()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "showInfoboxes",
+		name = "Show Infoboxes",
+		description = "Configures whether to show an infobox equipped charge items",
+		position = 17
+	)
+	default boolean showInfoboxes()
 	{
 		return false;
 	}

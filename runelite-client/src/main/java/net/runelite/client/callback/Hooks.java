@@ -24,7 +24,6 @@
  */
 package net.runelite.client.callback;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Injector;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,23 +40,33 @@ import java.awt.image.VolatileImage;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.BufferProvider;
 import net.runelite.api.Client;
+import net.runelite.api.Constants;
 import net.runelite.api.MainBufferProvider;
+import net.runelite.api.NullItemID;
 import net.runelite.api.RenderOverview;
+import net.runelite.api.Renderable;
 import net.runelite.api.WorldMapManager;
+import net.runelite.api.events.BeforeMenuRender;
+import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.hooks.Callbacks;
+import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.widgets.Widget;
 import static net.runelite.api.widgets.WidgetInfo.WORLD_MAP_VIEW;
+import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.Notifier;
 import net.runelite.client.RuneLite;
 import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.task.Scheduler;
 import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.OverlayRenderer;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.DeferredEventBus;
@@ -71,13 +80,15 @@ import net.runelite.client.util.DeferredEventBus;
 @Slf4j
 public class Hooks implements Callbacks
 {
-	private static final long CHECK = 600; // ms - how often to run checks
+	private static final long CHECK = Constants.GAME_TICK_LENGTH; // ms - how often to run checks
 
 	private static final Injector injector = RuneLite.getInjector();
 	private static final Client client = injector.getInstance(Client.class);
 	private static final OverlayRenderer renderer = injector.getInstance(OverlayRenderer.class);
+	private static final OverlayManager overlayManager = injector.getInstance(OverlayManager.class);
 
 	private static final GameTick GAME_TICK = new GameTick();
+	private static final BeforeRender BEFORE_RENDER = new BeforeRender();
 
 	@Inject
 	private EventBus eventBus;
@@ -146,6 +157,8 @@ public class Hooks implements Callbacks
 			client.setTickCount(tick + 1);
 		}
 
+		eventBus.post(BEFORE_RENDER);
+
 		clientThread.invoke();
 
 		long now = System.currentTimeMillis();
@@ -179,8 +192,8 @@ public class Hooks implements Callbacks
 	 * When the world map opens it loads about ~100mb of data into memory, which
 	 * represents about half of the total memory allocated by the client.
 	 * This gets cached and never released, which causes GC pressure which can affect
-	 * performance. This method reinitailzies the world map cache, which allows the
-	 * data to be garbage collecged, and causes the map data from disk each time
+	 * performance. This method reinitializes the world map cache, which allows the
+	 * data to be garbage collected, and causes the map data from disk each time
 	 * is it opened.
 	 */
 	private void checkWorldMap()
@@ -283,6 +296,7 @@ public class Hooks implements Callbacks
 		}
 
 		Image image = mainBufferProvider.getImage();
+		final Image finalImage;
 		final Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 
 		try
@@ -296,8 +310,20 @@ public class Hooks implements Callbacks
 
 		notifier.processFlash(graphics2d);
 
+		// Draw clientUI overlays
+		clientUi.paintOverlays(graphics2d);
+
+		graphics2d.dispose();
+
+		if (client.isGpu())
+		{
+			// processDrawComplete gets called on GPU by the gpu plugin at the end of its
+			// drawing cycle, which is later on.
+			return;
+		}
+
 		// Stretch the game image if the user has that enabled
-		if (!client.isResized() && client.isStretchedEnabled())
+		if (client.isStretchedEnabled())
 		{
 			GraphicsConfiguration gc = clientUi.getGraphicsConfiguration();
 			Dimension stretchedDimensions = client.getStretchedDimensions();
@@ -331,13 +357,35 @@ public class Hooks implements Callbacks
 					: RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			stretchedGraphics.drawImage(image, 0, 0, stretchedDimensions.width, stretchedDimensions.height, null);
 
-			image = stretchedImage;
+			finalImage = stretchedImage;
+		}
+		else
+		{
+			finalImage = image;
 		}
 
 		// Draw the image onto the game canvas
-		graphics.drawImage(image, 0, 0, client.getCanvas());
+		graphics.drawImage(finalImage, 0, 0, client.getCanvas());
 
-		drawManager.processDrawComplete(image);
+		// finalImage is backed by the client buffer which will change soon. make a copy
+		// so that callbacks can safely use it later from threads.
+		drawManager.processDrawComplete(() -> copy(finalImage));
+	}
+
+	/**
+	 * Copy an image
+	 * @param src
+	 * @return
+	 */
+	private static Image copy(Image src)
+	{
+		final int width = src.getWidth(null);
+		final int height = src.getHeight(null);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics graphics = image.getGraphics();
+		graphics.drawImage(src, 0, 0, width, height, null);
+		graphics.dispose();
+		return image;
 	}
 
 	@Override
@@ -391,6 +439,7 @@ public class Hooks implements Callbacks
 		try
 		{
 			renderer.render(graphics2d, OverlayLayer.ABOVE_WIDGETS);
+			renderer.render(graphics2d, OverlayLayer.ABOVE_MAP);
 		}
 		catch (Exception ex)
 		{
@@ -400,6 +449,10 @@ public class Hooks implements Callbacks
 		{
 			graphics2d.dispose();
 		}
+
+		// WidgetItemOverlays render at ABOVE_WIDGETS, reset widget item
+		// list for next frame.
+		overlayManager.getItemWidgets().clear();
 	}
 
 	@Override
@@ -409,5 +462,59 @@ public class Hooks implements Callbacks
 		// but having the game tick event after all packets
 		// have been processed is typically more useful.
 		shouldProcessGameTick = true;
+		// Replay deferred events, otherwise if two npc
+		// update packets get processed in one frame, a
+		// despawn event could be published prior to the
+		// spawn event, which is deferred
+		deferredEventBus.replay();
+	}
+
+	public static void renderDraw(Renderable renderable, int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash)
+	{
+		DrawCallbacks drawCallbacks = client.getDrawCallbacks();
+		if (drawCallbacks != null)
+		{
+			drawCallbacks.draw(renderable, orientation, pitchSin, pitchCos, yawSin, yawCos, x, y, z, hash);
+		}
+		else
+		{
+			renderable.draw(orientation, pitchSin, pitchCos, yawSin, yawCos, x, y, z, hash);
+		}
+	}
+
+	public static void clearColorBuffer(int x, int y, int width, int height, int color)
+	{
+		BufferProvider bp = client.getBufferProvider();
+		int canvasWidth = bp.getWidth();
+		int[] pixels = bp.getPixels();
+
+		int pixelPos = y * canvasWidth + x;
+		int pixelJump = canvasWidth - width;
+
+		for (int cy = y; cy < y + height; cy++)
+		{
+			for (int cx = x; cx < x + width; cx++)
+			{
+				pixels[pixelPos++] = 0;
+			}
+			pixelPos += pixelJump;
+		}
+	}
+
+	@Override
+	public void drawItem(int itemId, WidgetItem widgetItem)
+	{
+		// Empty bank item
+		if (widgetItem.getId() != NullItemID.NULL_6512)
+		{
+			overlayManager.getItemWidgets().add(widgetItem);
+		}
+	}
+
+	public static boolean drawMenu()
+	{
+		BeforeMenuRender event = new BeforeMenuRender();
+		client.getCallbacks().post(event);
+		return event.isConsumed();
 	}
 }
